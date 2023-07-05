@@ -23,26 +23,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.vsyninfo.sample_note_app.NoteViewModel
+import com.vsyninfo.sample_note_app.model.Note
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun NoteScreen(context: Context) {
-
+fun NoteScreen(
+               getNote:  List<Note>,
+               addNote:(Note) -> Unit,
+               removeNote:(Note) -> Unit) {
+  val context = LocalContext.current
     var title by remember {
         mutableStateOf("")
     }
     var description by remember {
         mutableStateOf("")
     }
-    var noteList = remember {
-        mutableStateListOf<Note>()
-    }
+
     Scaffold(topBar = {
         TopAppBar(backgroundColor = Blue) {
             Text(text = "Note App", color = MaterialTheme.colors.background)
@@ -74,6 +77,7 @@ fun NoteScreen(context: Context) {
 
                    // noteList.add(Note(title = title, description = description))
                     // Log.d("TAG","${noteList.toString()}")
+                    addNote(Note(title = title, description = description,))
                     title =""
                     description =""
                 })
@@ -81,11 +85,12 @@ fun NoteScreen(context: Context) {
             }
 
             LazyColumn {
-                items(noteList) { it ->
+                items(getNote) { it ->
                     Card(onClick = {
-                        removeList(it, noteList)
+                        removeNote(it)
                     }, shape = RoundedCornerShape(
-                        corner = CornerSize(5.dp)
+                         bottomStart = 10.dp,
+                        topEnd = 10.dp
 
                     ), elevation = 5.dp,
                         backgroundColor = Color(200, 207, 243, 255),
@@ -119,9 +124,7 @@ fun NoteScreen(context: Context) {
     }
 }
 
-fun removeList(note: Note, noteList: SnapshotStateList<Note>) {
-    noteList.remove(note)
-}
+
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -169,4 +172,3 @@ fun NoteButton(
 
 
 
-data class Note(val title: String, val description: String)
