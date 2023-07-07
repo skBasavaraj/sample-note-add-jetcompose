@@ -52,6 +52,7 @@ fun NoteScreen(
 
         }
     }) {
+
         Column(verticalArrangement = Arrangement.Top) {
             Column(
                 modifier = Modifier
